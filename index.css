@@ -34,6 +34,12 @@
   scroll-behavior: smooth;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -44,7 +50,6 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  overflow-x: hidden;
   line-height: 1.6;
 }
 
@@ -954,6 +959,9 @@ footer {
     flex-direction: row;
     overflow-x: auto;
     padding-bottom: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   .vertical-tab-btn {
@@ -963,6 +971,10 @@ footer {
 }
 
 @media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
   .container {
     padding: 0 1.5rem;
   }
@@ -1016,6 +1028,16 @@ footer {
   .client-categories {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  .client-logo-grid-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .vertical-images-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .contact-grid {
