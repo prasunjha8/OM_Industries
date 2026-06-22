@@ -103,7 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
     revealObserver.observe(element);
   });
 
-  // 5. Contact Form Handler (Mock Submission)
+  // 5. Contact Form Handler (Google Sheets Integration)
+  // To connect your form to Google Sheets:
+  // 1. In your Google Sheet, go to Extensions > Apps Script.
+  // 2. Paste the Google Apps Script code (provided in the chat).
+  // 3. Click "Deploy" > "New deployment" > Select type: "Web app".
+  // 4. Set "Execute as" to "Me", and "Who has access" to "Anyone".
+  // 5. Click Deploy, authorize permissions, and copy the Web App URL.
+  // 6. Paste that URL in the APPS_SCRIPT_URL variable below:
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhMrdOCl8P1V6XA6DbBVPlk621qGTGTyGRDBp5neVUHanAAe7FTuMVx_FFApyBZEw/exec"; 
+
   const contactForm = document.getElementById('contact-form');
   const formStatus = document.getElementById('form-status');
 
@@ -112,33 +121,61 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const location = document.getElementById('location').value.trim();
     const subject = document.getElementById('subject').value.trim();
     const message = document.getElementById('message').value.trim();
     
     // Simple validation feedback
-    if (!name || !email || !subject || !message) {
+    if (!name || !email || !phone || !location || !subject || !message) {
       formStatus.textContent = 'Please fill out all fields.';
       formStatus.className = 'form-message error';
+      formStatus.style.display = 'block';
       return;
     }
     
-    // Mock network request delay
     formStatus.textContent = 'Sending message...';
     formStatus.className = 'form-message';
     formStatus.style.display = 'block';
     
-    setTimeout(() => {
-      // Clear inputs
+    const formData = { name, email, phone, location, subject, message };
+
+    if (!APPS_SCRIPT_URL) {
+      // Fallback to mock delay if URL is not configured yet
+      setTimeout(() => {
+        contactForm.reset();
+        formStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Thank you! Your message has been sent successfully. An expert will reach out to you shortly. <br><small style="opacity: 0.8;">(Mock Mode: Configure APPS_SCRIPT_URL in index.js to save to Google Sheets)</small>';
+        formStatus.className = 'form-message success';
+        
+        setTimeout(() => {
+          formStatus.style.display = 'none';
+        }, 8000);
+      }, 1500);
+      return;
+    }
+    
+    // Send form data to Google Sheets via Apps Script Web App
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Prevents browser CORS redirect errors from Google Apps Script
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8' // Avoids CORS preflight OPTIONS request
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(() => {
       contactForm.reset();
-      
-      // Show Success Message
       formStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Thank you! Your message has been sent successfully. An expert will reach out to you shortly.';
       formStatus.className = 'form-message success';
       
-      // Clear status after 8 seconds
       setTimeout(() => {
         formStatus.style.display = 'none';
       }, 8000);
-    }, 1500);
+    })
+    .catch(error => {
+      console.error('Submission error:', error);
+      formStatus.textContent = 'Failed to send message. Please try again or contact us directly.';
+      formStatus.className = 'form-message error';
+    });
   });
 });

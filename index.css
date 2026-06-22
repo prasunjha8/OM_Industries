@@ -743,16 +743,36 @@ header.scrolled .navbar {
   color: var(--accent-cyan);
 }
 
-.map-placeholder {
-  height: 180px;
-  background: rgba(15, 22, 38, 0.5);
+/* Embedded Map */
+.map-container {
+  position: relative;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  gap: 0.5rem;
+  background: var(--bg-card);
+  transition: all var(--transition-slow);
+  box-shadow: var(--shadow-card);
+  line-height: 0;
+}
+
+.map-container:hover {
+  border-color: rgba(0, 240, 255, 0.25);
+  box-shadow: 0 15px 40px -15px rgba(0, 0, 0, 0.6), var(--shadow-neon);
+  transform: translateY(-3px);
+}
+
+.map-container iframe {
+  display: block;
+  width: 100%;
+  height: 360px; /* Aligns perfectly with the contact form height */
+  border: 0;
+  filter: grayscale(0.9) invert(0.92) contrast(1.2) hue-rotate(180deg);
+  transition: filter var(--transition-normal);
+}
+
+.map-container:hover iframe {
+  filter: grayscale(0.1) invert(0) contrast(1) hue-rotate(0deg);
 }
 
 /* Contact Form */
